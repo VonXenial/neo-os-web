@@ -1125,7 +1125,8 @@ class SystemCore {
 
             // RADIO AUDIO VIZ
             if (audio && audio.analyser) {
-                const data = audio.getFreqData();
+                const data = new Uint8Array(audio.analyser.frequencyBinCount);
+                audio.analyser.getByteFrequencyData(data);
                 const verts = grid.geometry.attributes.position.array;
                 // Deform Z (which is Y in world space due to rotation)
                 for (let i = 0; i < verts.length; i += 3) {
