@@ -1,4 +1,7 @@
-# NEO-OS v3.1 // TERMINAL CYBERPUNK 2077
+<div align="center">
+  <img src="assets/img/logo_main.png" alt="NEO-OS Logo" width="200">
+  <h1>NEO-OS v3.1 // TERMINAL CYBERPUNK 2077</h1>
+</div>
 
 [![Neo-OS](https://img.shields.io/badge/NEO-OS-v3.1-cyan.svg)](index.html) [![Status](https://img.shields.io/badge/Estado-Operacional-green.svg)]()
 
