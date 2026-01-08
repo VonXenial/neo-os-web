@@ -582,28 +582,72 @@ class SystemCore {
         const cvs = document.getElementById('cyber-canvas');
         if (!cvs) return;
 
+        // PERFORMANCE: Detect device capabilities
+        const perf = window.NEO_PERF || { lowEnd: false, targetFPS: 60 };
+        const isLowEnd = perf.lowEnd;
+
         // Setup Renderer & Camera ONCE
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x0a0a14);
         this.scene.fog = new THREE.Fog(0x0a0a14, 20, 100);
 
         this.cam = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.ren = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: false }); // Force Opaque
-        this.ren.setSize(window.innerWidth, window.innerHeight);
-        this.ren.setPixelRatio(window.devicePixelRatio);
-        console.log("NEO-OS: 3D Engine Initialized");
 
-        // Resize Listener
+        // PERFORMANCE: Adaptive pixel ratio (lower for slow devices)
+        const maxPixelRatio = isLowEnd ? 1 : Math.min(window.devicePixelRatio, 2);
+
+        this.ren = new THREE.WebGLRenderer({
+            canvas: cvs,
+            antialias: !isLowEnd, // Disable AA on low-end devices
+            alpha: false,
+            powerPreference: 'high-performance'
+        });
+        this.ren.setSize(window.innerWidth, window.innerHeight);
+        this.ren.setPixelRatio(maxPixelRatio);
+
+        // PERFORMANCE: Store settings for scene builders
+        this.perfSettings = {
+            lowEnd: isLowEnd,
+            particleMultiplier: isLowEnd ? 0.5 : 1,
+            maxParticles: isLowEnd ? 500 : 1000,
+            shadowsEnabled: !isLowEnd
+        };
+
+        console.log(`NEO-OS: 3D Engine Initialized (${isLowEnd ? 'LOW-END' : 'HIGH-END'} mode, PR: ${maxPixelRatio})`);
+
+        // Resize Listener (Throttled)
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            this.cam.aspect = window.innerWidth / window.innerHeight;
-            this.cam.updateProjectionMatrix();
-            this.ren.setSize(window.innerWidth, window.innerHeight);
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.cam.aspect = window.innerWidth / window.innerHeight;
+                this.cam.updateProjectionMatrix();
+                this.ren.setSize(window.innerWidth, window.innerHeight);
+            }, 100); // Debounce 100ms
         });
 
-        // Start Loop
-        this.activeAnim = null; // Function to run per frame
-        const loop = () => {
+        // PERFORMANCE: Frame timing
+        this.activeAnim = null;
+        const targetFrameTime = 1000 / perf.targetFPS;
+        let lastFrameTime = 0;
+        let frameCount = 0;
+        let lastFPSUpdate = 0;
+
+        // PERFORMANCE: Cache DOM elements for viz
+        const vizBars = document.querySelectorAll('.viz-bar');
+        let vizUpdateCounter = 0;
+
+        const loop = (timestamp) => {
             requestAnimationFrame(loop);
+
+            // PERFORMANCE: Frame rate limiting
+            const deltaTime = timestamp - lastFrameTime;
+            if (deltaTime < targetFrameTime) return;
+            lastFrameTime = timestamp - (deltaTime % targetFrameTime);
+
+            // PERFORMANCE: Skip rendering when tab is not visible
+            if (document.hidden) return;
+
             try {
                 if (this.activeAnim) this.activeAnim();
                 this.ren.render(this.scene, this.cam);
@@ -617,19 +661,23 @@ class SystemCore {
                 console.error("3D Loop Error:", e);
             }
 
-            // Viz Sync
-            if (audio && audio.analyser) {
+            // PERFORMANCE: Throttled Viz Sync (Every 3rd frame)
+            vizUpdateCounter++;
+            if (vizUpdateCounter >= 3 && audio && audio.analyser) {
+                vizUpdateCounter = 0;
                 const data = new Uint8Array(audio.analyser.frequencyBinCount);
                 audio.analyser.getByteFrequencyData(data);
-                const bars = document.querySelectorAll('.viz-bar');
-                bars.forEach((b, i) => {
+                vizBars.forEach((b, i) => {
                     const h = Math.max(4, (data[i * 2] / 255) * 40);
                     b.style.height = h + 'px';
                 });
             }
+
             if (window.TWEEN) window.TWEEN.update();
         };
-        loop();
+
+        // Use timestamp version of rAF
+        requestAnimationFrame(loop);
 
         // Load Default
         console.log("NEO-OS: Loading initial scene 'city'...");
@@ -749,7 +797,8 @@ class SystemCore {
         }
 
         // NEURAL NETWORK OVERLAY
-        const nodeCount = 60;
+        const nodeMultiplier = this.perfSettings?.particleMultiplier || 1;
+        const nodeCount = Math.floor(60 * nodeMultiplier);
         const nodeGeo = new THREE.BufferGeometry();
         const nodePos = [];
         const linesMat = new THREE.LineBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.15 });
@@ -806,7 +855,7 @@ class SystemCore {
         const skullTex = loadTexture('assets/img/skull_virus.svg');
         skullTex.magFilter = THREE.NearestFilter;
 
-        const holoCount = 50;
+        const holoCount = Math.floor(50 * nodeMultiplier);
         const holoGeo = new THREE.BufferGeometry();
         const holoPos = [];
         for (let i = 0; i < holoCount; i++) {
@@ -824,7 +873,7 @@ class SystemCore {
         this.scene.add(holograms);
 
         // DIGITAL RAIN (Falling Squares)
-        const rainCount = 1000;
+        const rainCount = this.perfSettings?.maxParticles || 1000;
         const rainGeo = new THREE.BufferGeometry();
         const rainPos = [];
         for (let i = 0; i < rainCount; i++) {
@@ -1004,8 +1053,8 @@ class SystemCore {
         this.scene.background = new THREE.Color(0x000505);
         this.scene.fog = new THREE.Fog(0x000505, 5, 50);
 
-        // Data Tunnel (Particles)
-        const count = 2000;
+        // Data Tunnel (Particles) - Adaptive count
+        const count = Math.floor((this.perfSettings?.maxParticles || 1000) * 2);
         const geo = new THREE.BufferGeometry();
         const pos = [];
         for (let i = 0; i < count; i++) {
@@ -1373,4 +1422,45 @@ class SystemCore {
 // INIT GLOBAL
 const audio = new AudioEngine();
 const sys = new SystemCore();
-document.addEventListener('DOMContentLoaded', () => sys.init());
+
+// Wait for async libraries and initialize
+function initializeNeoOS() {
+    const loader = window.NEO_LOAD || { i18n: true, three: true };
+
+    // Check if libraries are ready
+    const i18nReady = typeof i18next !== 'undefined' || loader.i18n;
+    const threeReady = typeof THREE !== 'undefined' || loader.three;
+
+    if (!i18nReady || !threeReady) {
+        // Update loader message and wait
+        if (typeof updateLoader === 'function') {
+            updateLoader(20, 'WAITING FOR LIBS...');
+        }
+        setTimeout(initializeNeoOS, 100);
+        return;
+    }
+
+    // Update loader
+    if (typeof updateLoader === 'function') {
+        updateLoader(80, 'INITIALIZING CORE...');
+    }
+
+    // Initialize system
+    sys.init();
+
+    // Update loader to complete
+    if (typeof updateLoader === 'function') {
+        updateLoader(100, 'SYSTEM READY');
+    }
+
+    // Hide loader after a short delay
+    setTimeout(() => {
+        if (typeof hideLoader === 'function') {
+            hideLoader();
+        }
+        window.NEO_LOAD.ready = true;
+    }, 500);
+}
+
+document.addEventListener('DOMContentLoaded', initializeNeoOS);
+
