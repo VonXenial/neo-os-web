@@ -161,7 +161,7 @@ class SystemCore {
         this.updateClock();
         // ... rest of init
         this.initViz();
-        // this.init3D(); REMOVED (Legacy)
+        this.init3DEngine(); // Enabled 3D Background
 
         // Routing Check
         const params = new URLSearchParams(window.location.search);
@@ -586,6 +586,7 @@ class SystemCore {
                     b.style.height = h + 'px';
                 });
             }
+            if (window.TWEEN) window.TWEEN.update(); // Just in case if we add tweens later, but keeping loop robust
         };
         loop();
 
