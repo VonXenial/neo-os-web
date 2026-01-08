@@ -174,7 +174,11 @@ class SystemCore {
             // Init Audio on first user Interaction (Browser policy)
             const startAudio = () => {
                 if (this.theme) return;
-                if (audio.playStartAmbient) audio.playStartAmbient();
+                console.log("NEO-OS: Audio Context Resumed");
+                audio.ctx.resume().then(() => {
+                    audio.playStartAmbient(); // Music
+                });
+
                 window.removeEventListener('click', startAudio);
                 window.removeEventListener('keydown', startAudio);
             };
