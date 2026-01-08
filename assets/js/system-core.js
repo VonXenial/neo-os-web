@@ -145,11 +145,18 @@ class SystemCore {
     }
 
     init() {
+        // DEPENDENCY CHECK
+        if (typeof i18next === 'undefined') {
+            console.error("NEO-OS: i18next library failed to load.");
+            alert("CRITICAL ERROR: i18next LIB MISSING.\nCHECK INTERNET CONNECTION.");
+            return;
+        }
+
         i18next.init({ lng: 'en', resources: { en: { translation: this.resources.en }, es: { translation: this.resources.es }, pt: { translation: this.resources.pt } } },
             () => this.updateText());
 
         // Init Minigame
-        this.minigame = new HackingMinigame(this);
+        this.minigame = new BreachMinigame(this);
 
         // Security & Progression (Phase 6)
         this.securityLevel = 1;
@@ -158,10 +165,21 @@ class SystemCore {
         // Anti-Cheat: Disable Context Menu
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        this.updateClock();
         // ... rest of init
         this.initViz();
-        this.init3DEngine(); // Enabled 3D Background
+
+        if (typeof THREE === 'undefined') {
+            console.error("NEO-OS: THREE.js not loaded. Check internet connection or script path.");
+            alert("SYSTEM ERROR: THREE.JS LIB MISSING.\nCHECK INTERNET CONNECTION.");
+            // Continue without 3D
+        } else {
+            try {
+                this.init3DEngine(); // Enabled 3D Background
+            } catch (e) {
+                console.error("3D Init Failed:", e);
+                // alert("3D ENGINE FAILED: " + e.message); // Optional, maybe too intrusive
+            }
+        }
 
         // Routing Check
         const params = new URLSearchParams(window.location.search);
@@ -174,10 +192,17 @@ class SystemCore {
             // Init Audio on first user Interaction (Browser policy)
             const startAudio = () => {
                 if (this.theme) return;
-                console.log("NEO-OS: Audio Context Resumed");
-                audio.ctx.resume().then(() => {
-                    audio.playStartAmbient(); // Music
-                });
+
+                // Force Resume Check
+                if (audio.ctx.state === 'suspended') {
+                    audio.ctx.resume().then(() => {
+                        console.log("NEO-OS: Audio Context Resumed");
+                        audio.playStartAmbient(); // Music
+                    }).catch(err => console.error("Audio Resume Error:", err));
+                } else {
+                    console.log("NEO-OS: Audio already running");
+                    audio.playStartAmbient();
+                }
 
                 window.removeEventListener('click', startAudio);
                 window.removeEventListener('keydown', startAudio);
@@ -582,6 +607,12 @@ class SystemCore {
             try {
                 if (this.activeAnim) this.activeAnim();
                 this.ren.render(this.scene, this.cam);
+
+                // DEBUG ONCE
+                if (!window.hasLoggedRender) {
+                    console.log("NEO-OS: First Render Frame. Scene children:", this.scene.children.length);
+                    window.hasLoggedRender = true;
+                }
             } catch (e) {
                 console.error("3D Loop Error:", e);
             }
@@ -596,11 +627,12 @@ class SystemCore {
                     b.style.height = h + 'px';
                 });
             }
-            if (window.TWEEN) window.TWEEN.update(); // Just in case if we add tweens later, but keeping loop robust
+            if (window.TWEEN) window.TWEEN.update();
         };
         loop();
 
         // Load Default
+        console.log("NEO-OS: Loading initial scene 'city'...");
         this.switchScene('city');
     }
 
@@ -760,11 +792,18 @@ class SystemCore {
 
         // VIRUS PARTICLES (Floating Cloud)
         const texLoader = new THREE.TextureLoader();
-        const virusTex = texLoader.load('assets/img/virus_particle.svg');
+
+        const loadTexture = (path) => {
+            return texLoader.load(path, undefined, undefined, (e) => {
+                console.warn("Texture load failed (File protocol restriction?):", path);
+            });
+        };
+
+        const virusTex = loadTexture('assets/img/virus_particle.svg');
         virusTex.magFilter = THREE.NearestFilter;
 
         // SKULL TEXTURE (For Pillars)
-        const skullTex = texLoader.load('assets/img/skull_virus.svg');
+        const skullTex = loadTexture('assets/img/skull_virus.svg');
         skullTex.magFilter = THREE.NearestFilter;
 
         const holoCount = 50;
