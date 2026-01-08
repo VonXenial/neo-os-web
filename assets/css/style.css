@@ -985,3 +985,490 @@ input[type=range] {
   text-shadow: 0 0 10px #ffb833;
   font-weight: bold;
 }
+
+/* =========================================
+   NEW PUZZLE SYSTEM V2
+   ========================================= */
+
+/* Puzzle Container Base */
+.puzzle-container-v2 {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  backdrop-filter: blur(8px);
+  padding: 40px;
+  gap: 15px;
+  overflow: hidden;
+}
+
+/* Puzzle Inner Frame - Contains all puzzle UI */
+.puzzle-frame {
+  position: relative;
+  background: rgba(10, 10, 20, 0.9);
+  border: 2px solid currentColor;
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Control hints at bottom */
+.puzzle-controls-hint {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  opacity: 0.7;
+  text-align: center;
+  padding: 10px 20px;
+  border: 1px dashed currentColor;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Puzzle Animations */
+.puzzle-enter {
+  animation: puzzleEnter 0.5s ease-out;
+}
+
+.puzzle-exit {
+  animation: puzzleExit 0.4s ease-in forwards;
+}
+
+@keyframes puzzleEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes puzzleExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Puzzle Title */
+.puzzle-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.puzzle-title h3 {
+  font-size: 2rem;
+  letter-spacing: 5px;
+  margin-bottom: 10px;
+}
+
+.puzzle-title.net-theme {
+  color: #00ffcc;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.puzzle-title.corp-theme {
+  color: #ff3333;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.puzzle-title.nomad-theme {
+  color: #ffb833;
+  font-family: 'VT323', monospace;
+}
+
+.puzzle-hint {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Level Indicator */
+.puzzle-level-indicator {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border: 1px solid currentColor;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.level-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+/* Success/Fail Overlays */
+.puzzle-success-overlay,
+.puzzle-fail-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: overlayPulse 0.5s ease-out;
+}
+
+.puzzle-success-overlay {
+  background: rgba(0, 255, 100, 0.1);
+  border: 2px solid #00ff66;
+}
+
+.puzzle-fail-overlay {
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px solid #ff3333;
+}
+
+.success-text,
+.fail-text {
+  font-size: 3rem;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 10px;
+  animation: textPop 0.3s ease-out;
+}
+
+.success-text {
+  color: #00ff66;
+  text-shadow: 0 0 30px #00ff66;
+}
+
+.fail-text {
+  color: #ff3333;
+  text-shadow: 0 0 30px #ff3333;
+}
+
+@keyframes overlayPulse {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes textPop {
+  0% {
+    transform: scale(0.5);
+  }
+
+  70% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* =========================================
+   PACKET DECRYPTOR (Netrunner)
+   ========================================= */
+.decrypt-target {
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.decrypt-target .label {
+  color: #888;
+  margin-right: 10px;
+}
+
+.hex-target {
+  display: inline-block;
+  padding: 5px 15px;
+  border: 1px solid #00ffcc;
+  margin: 0 5px;
+  transition: all 0.3s;
+}
+
+.hex-target.matched {
+  background: #00ffcc;
+  color: black;
+  box-shadow: 0 0 15px #00ffcc;
+}
+
+.decrypt-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 500px;
+}
+
+.decrypt-cell {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #00ffcc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.2rem;
+  color: #00ffcc;
+  cursor: pointer;
+  animation: cellFade 1.5s ease-out forwards;
+  transition: all 0.2s;
+}
+
+.decrypt-cell:hover {
+  background: #00ffcc;
+  color: black;
+  transform: scale(1.1);
+}
+
+@keyframes cellFade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.decrypt-progress {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  color: #00ffcc;
+}
+
+/* =========================================
+   MEMORY SYNC (Netrunner)
+   ========================================= */
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+  margin: 20px auto;
+}
+
+.memory-cell {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 255, 204, 0.1);
+  border: 2px solid #00ffcc;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.memory-cell.active {
+  background: #00ffcc;
+  box-shadow: 0 0 30px #00ffcc;
+}
+
+.memory-cell.player-active {
+  background: rgba(0, 255, 204, 0.5);
+  transform: scale(0.95);
+}
+
+.memory-status {
+  margin-top: 20px;
+  font-size: 1.3rem;
+  color: #00ffcc;
+  text-align: center;
+}
+
+/* =========================================
+   TARGET LOCK (Arasaka)
+   ========================================= */
+.target-arena {
+  width: 400px;
+  height: 300px;
+  border: 2px solid #ff3333;
+  position: relative;
+  background: rgba(50, 0, 0, 0.3);
+  margin: 20px auto;
+  overflow: hidden;
+}
+
+.target-hostile {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  font-size: 40px;
+  color: #ff3333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: crosshair;
+  text-shadow: 0 0 10px #ff3333;
+  transition: transform 0.1s;
+}
+
+.target-hostile:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+}
+
+.target-progress-bar {
+  width: 300px;
+  height: 20px;
+  background: #330000;
+  border: 1px solid #ff3333;
+  margin: 20px auto;
+}
+
+.target-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff5555, #ff3333);
+  transition: width 0.1s;
+}
+
+/* =========================================
+   AUTH BYPASS (Arasaka)
+   ========================================= */
+.auth-lock-container {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  margin: 30px auto;
+}
+
+.auth-ring {
+  position: absolute;
+  border: 3px solid #ff3333;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s;
+}
+
+.ring-gap {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 15px;
+  background: black;
+  border: 2px solid #ff3333;
+}
+
+.auth-ring.ring-locked {
+  border-color: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+}
+
+.auth-ring.ring-locked .ring-gap {
+  border-color: #00ff66;
+  background: #00ff66;
+}
+
+.auth-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  color: #ff3333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.auth-center:hover {
+  color: white;
+  text-shadow: 0 0 20px #ff3333;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.auth-status {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #ff3333;
+  margin-top: 20px;
+}
+
+/* =========================================
+   ENGINE SYNC (Nomad)
+   ========================================= */
+.engine-gauge {
+  margin: 30px auto;
+  width: 350px;
+}
+
+.gauge-bar {
+  height: 40px;
+  background: linear-gradient(to right, #330000, #003300, #330000);
+  border: 2px solid #ffb833;
+  position: relative;
+}
+
+.gauge-zone {
+  position: absolute;
+  height: 100%;
+  background: rgba(0, 255, 0, 0.3);
+  border-left: 2px solid #00ff00;
+  border-right: 2px solid #00ff00;
+}
+
+.gauge-needle {
+  position: absolute;
+  top: -5px;
+  width: 4px;
+  height: 50px;
+  background: #ffb833;
+  box-shadow: 0 0 10px #ffb833;
+}
+
+.engine-progress {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #ffb833;
+  margin-top: 20px;
+}
+
+/* =========================================
+   SIGNAL SCRAMBLER (Nomad)
+   ========================================= */
+.signal-canvas {
+  border: 2px solid #ffb833;
+  margin: 20px auto;
+  display: block;
+}
+
+.signal-controls {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px 0;
+  font-size: 1.2rem;
+  color: #ffb833;
+}
+
+.signal-slider span {
+  margin: 0 5px;
+}
+
+.signal-status {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #ffb833;
+  margin-top: 20px;
+  transition: color 0.3s;
+}

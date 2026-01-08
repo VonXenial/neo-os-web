@@ -57,9 +57,9 @@ class SystemCore {
                 m_nomad: "Smuggle the package across the border. Avoid patrols.",
                 err_unknown: "COMMAND UNKNOWN",
                 tip_help: "SYSTEM: TYPE 'HELP' FOR MANUAL.",
-                man_net: "<h3>NETRUNNER PROTOCOLS</h3><p>Use the console to execute daemons.<br>- SCAN: Analyze node security.<br>- BREACH: Bypass ICE.<br>- UPLOAD: Exfiltrate data.</p>",
-                man_corp: "<h3>ARASAKA OPERATIVE MANUAL</h3><p>Authorized personnel only.<br>- TACTICAL SCAN: Reveal enemy positions.<br>- DEPLOY: Launch drone support.<br>- PURGE: Wipe local logs.</p>",
-                man_nomad: "<h3>SCAVENGER TERMINAL</h3><p>Old but gold.<br>- BOOT: Restart engine diagnostics.<br>- RADIO: Tune into local frequencies.<br>- PING: Check mesh latency.</p>",
+                man_net: "<h3>NETRUNNER PROTOCOLS</h3><p>Use the console to execute daemons.</p><h4>COMMANDS</h4><p>- SCAN: Analyze node security.<br>- BREACH: Bypass ICE.<br>- TRACE: Data maze [⬆⬇⬅➡]<br>- UPLOAD: Exfiltrate data.</p><h4>PUZZLES</h4><p>- DECRYPT: Hex sequence [MOUSE]<br>- MEMSYNC: Memory pattern [MOUSE]</p>",
+                man_corp: "<h3>ARASAKA OPERATIVE MANUAL</h3><p>Authorized personnel only.</p><h4>COMMANDS</h4><p>- TACTICAL SCAN: Reveal enemies.<br>- OVERRIDE: Security QTE [A-Z]<br>- DEPLOY: Launch drones.<br>- PURGE: Wipe logs.</p><h4>PUZZLES</h4><p>- LOCK: Target tracking [MOUSE]<br>- AUTH: Ring alignment [MOUSE]</p>",
+                man_nomad: "<h3>SCAVENGER TERMINAL</h3><p>Old but gold.</p><h4>COMMANDS</h4><p>- BOOT: Engine diagnostics.<br>- TUNE: Signal tuner [  ]<br>- RADIO: Local frequencies.<br>- PING: Mesh latency.</p><h4>PUZZLES</h4><p>- ENGINE: Sync timing [SPACE]<br>- SIGNAL: Frequency tune [⬆⬇⬅➡]</p>",
 
                 // MISSION STEPS EN
                 m_net_s1_h: "STEP 1: SCAN NETWORK NODES", m_net_s1_s: "TARGET FOUND: ARASAKA SUBNET [192.168.0.X]",
@@ -75,7 +75,24 @@ class SystemCore {
                 m_nomad_s1_h: "STEP 1: BOOT ENGINE", m_nomad_s1_s: "ENGINE ONLINE. RPM STABLE.",
                 m_nomad_s2_h: "STEP 2: TUNE SIGNAL FREQUENCY", m_nomad_s2_s: "SIGNAL LOCKED. CHANNEL CLEAR.",
                 m_nomad_s3_h: "STEP 3: LISTEN TO BROADCAST", m_nomad_s3_s: "INTEL RECEIVED. ROUTE UPDATED.",
-                m_nomad_s4_h: "STEP 4: PING SMUGGLER MESH", m_nomad_s4_s: "ROUTE CLEAR. STARTING RUN."
+                m_nomad_s4_h: "STEP 4: PING SMUGGLER MESH", m_nomad_s4_s: "ROUTE CLEAR. STARTING RUN.",
+
+                // NEW PUZZLE TRANSLATIONS (V2)
+                pzl_level: "LEVEL",
+                pzl_success: "SYSTEM BYPASSED",
+                pzl_fail: "ACCESS DENIED",
+                pzl_decrypt_title: "PACKET DECRYPTOR",
+                pzl_decrypt_hint: "Click the correct hex before it fades",
+                pzl_sync_title: "NEURAL SYNC",
+                pzl_sync_hint: "Memorize the pattern, then replicate it",
+                pzl_lock_title: "TARGET LOCK",
+                pzl_lock_hint: "Hold cursor on target to lock",
+                pzl_auth_title: "AUTH BYPASS",
+                pzl_auth_hint: "Click when the gaps align",
+                pzl_engine_title: "ENGINE SYNC",
+                pzl_engine_hint: "Press SPACE when needle is in the green zone",
+                pzl_scramble_title: "SIGNAL DECODER",
+                pzl_scramble_hint: "Use arrow keys to tune frequency and gain"
             },
             es: {
                 desc_net: "Interfaz Circular. Datos Holográficos. Audio Trance.",
@@ -89,9 +106,9 @@ class SystemCore {
                 m_nomad: "Contrabandear el paquete por la frontera. Evita patrullas.",
                 err_unknown: "COMANDO DESCONOCIDO",
                 tip_help: "SISTEMA: ESCRIBE 'AYUDA' PARA MANUAL.",
-                man_net: "<h3>PROTOCOLOS NETRUNNER</h3><p>Usa la consola para ejecutar demonios.<br>- SCAN: Analizar seguridad.<br>- BREACH: Romper ICE.<br>- TRACE: Rutear paquetes (Laberinto).<br>- UPLOAD: Exfiltrar datos.</p>",
-                man_corp: "<h3>MANUAL OPERATIVO ARASAKA</h3><p>Solo personal autorizado.<br>- TACTICAL SCAN: Revelar enemigos.<br>- OVERRIDE: Autorizar fuerza letal (QTE).<br>- DEPLOY: Lanzar drones.<br>- PURGE: Borrar registros.</p>",
-                man_nomad: "<h3>TERMINAL CHATARRERO</h3><p>Viejo pero confiable.<br>- BOOT: Reiniciar diagnósticos.<br>- TUNE: Sintonizar señal (Ondas).<br>- RADIO: Escuchar transmisión.<br>- PING: Comprobar latencia.</p>",
+                man_net: "<h3>PROTOCOLOS NETRUNNER</h3><p>Usa la consola para ejecutar demonios.</p><h4>COMANDOS</h4><p>- SCAN: Analizar seguridad.<br>- BREACH: Romper ICE.<br>- TRACE: Laberinto [⬆⬇⬅➡]<br>- UPLOAD: Exfiltrar datos.</p><h4>PUZZLES</h4><p>- DECRYPT: Secuencia hex [MOUSE]<br>- MEMSYNC: Patron memoria [MOUSE]</p>",
+                man_corp: "<h3>MANUAL OPERATIVO ARASAKA</h3><p>Solo personal autorizado.</p><h4>COMANDOS</h4><p>- TACTICAL SCAN: Revelar enemigos.<br>- OVERRIDE: QTE seguridad [A-Z]<br>- DEPLOY: Lanzar drones.<br>- PURGE: Borrar registros.</p><h4>PUZZLES</h4><p>- LOCK: Rastreo objetivo [MOUSE]<br>- AUTH: Alinear anillos [MOUSE]</p>",
+                man_nomad: "<h3>TERMINAL CHATARRERO</h3><p>Viejo pero confiable.</p><h4>COMANDOS</h4><p>- BOOT: Diagnósticos motor.<br>- TUNE: Sintonizador [  ]<br>- RADIO: Frecuencias locales.<br>- PING: Latencia mesh.</p><h4>PUZZLES</h4><p>- ENGINE: Sincro motor [ESPACIO]<br>- SIGNAL: Sintonizar [⬆⬇⬅➡]</p>",
 
                 // MISSION STEPS ES
                 m_net_s1_h: "PASO 1: ESCANEAR NODOS DE RED", m_net_s1_s: "OBJETIVO ENCONTRADO: SUBNET ARASAKA",
@@ -107,7 +124,24 @@ class SystemCore {
                 m_nomad_s1_h: "PASO 1: ARRANCAR MOTOR", m_nomad_s1_s: "MOTOR ONLINE. RPM ESTABLES.",
                 m_nomad_s2_h: "PASO 2: SINTONIZAR FRECUENCIA", m_nomad_s2_s: "SEÑAL BLOQUEADA. CANAL LIMPIO.",
                 m_nomad_s3_h: "PASO 3: ESCUCHAR TRANSMISIÓN", m_nomad_s3_s: "INTEL RECIBIDA. RUTA ACTUALIZADA.",
-                m_nomad_s4_h: "PASO 4: PINGEAR RED DE CONTRABANDO", m_nomad_s4_s: "RUTA DESPEJADA. INICIANDO CARRERA."
+                m_nomad_s4_h: "PASO 4: PINGEAR RED DE CONTRABANDO", m_nomad_s4_s: "RUTA DESPEJADA. INICIANDO CARRERA.",
+
+                // NEW PUZZLE TRANSLATIONS (V2) - ES
+                pzl_level: "NIVEL",
+                pzl_success: "SISTEMA EVADIDO",
+                pzl_fail: "ACCESO DENEGADO",
+                pzl_decrypt_title: "DESCIFRADOR DE PAQUETES",
+                pzl_decrypt_hint: "Haz clic en el hex correcto antes de que desaparezca",
+                pzl_sync_title: "SINCRO NEURAL",
+                pzl_sync_hint: "Memoriza el patrón, luego replícalo",
+                pzl_lock_title: "BLOQUEO DE OBJETIVO",
+                pzl_lock_hint: "Mantén el cursor sobre el objetivo para bloquearlo",
+                pzl_auth_title: "BYPASS DE AUTENTICACIÓN",
+                pzl_auth_hint: "Haz clic cuando los huecos se alineen",
+                pzl_engine_title: "SINCRO DE MOTOR",
+                pzl_engine_hint: "Presiona ESPACIO cuando la aguja esté en la zona verde",
+                pzl_scramble_title: "DECODIFICADOR DE SEÑAL",
+                pzl_scramble_hint: "Usa las flechas para ajustar frecuencia y ganancia"
             },
             pt: {
                 desc_net: "Interface Circular. Dados Holográficos. Áudio Trance.",
@@ -121,9 +155,9 @@ class SystemCore {
                 m_nomad: "Contrabandear o pacote pela fronteira. Evite patrulhas.",
                 err_unknown: "COMANDO DESCONHECIDO",
                 tip_help: "SISTEMA: DIGITE 'AJUDA' PARA MANUAL.",
-                man_net: "<h3>PROTOCOLOS NETRUNNER</h3><p>Use o console para executar daemons.<br>- SCAN: Analisar segurança.<br>- BREACH: Quebrar ICE.<br>- TRACE: Roteamento de pacotes (Labirinto).<br>- UPLOAD: Exfiltrar dados.</p>",
-                man_corp: "<h3>MANUAL OPERATIVO ARASAKA</h3><p>Apenas pessoal autorizado.<br>- TACTICAL SCAN: Revelar inimigos.<br>- OVERRIDE: Autorizar força letal (QTE).<br>- DEPLOY: Lançar drones.<br>- PURGE: Apagar registros.</p>",
-                man_nomad: "<h3>TERMINAL SUCATEIRO</h3><p>Velho mas confiável.<br>- BOOT: Reiniciar diagnósticos.<br>- TUNE: Sintonizar sinal (Ondas).<br>- RADIO: Ouvir transmissão.<br>- PING: Verificar latência.</p>",
+                man_net: "<h3>PROTOCOLOS NETRUNNER</h3><p>Use o console para executar daemons.</p><h4>COMANDOS</h4><p>- SCAN: Analisar segurança.<br>- BREACH: Quebrar ICE.<br>- TRACE: Labirinto [⬆⬇⬅➡]<br>- UPLOAD: Exfiltrar dados.</p><h4>PUZZLES</h4><p>- DECRYPT: Sequência hex [MOUSE]<br>- MEMSYNC: Padrão memória [MOUSE]</p>",
+                man_corp: "<h3>MANUAL OPERATIVO ARASAKA</h3><p>Apenas pessoal autorizado.</p><h4>COMANDOS</h4><p>- TACTICAL SCAN: Revelar inimigos.<br>- OVERRIDE: QTE segurança [A-Z]<br>- DEPLOY: Lançar drones.<br>- PURGE: Apagar registros.</p><h4>PUZZLES</h4><p>- LOCK: Rastreio alvo [MOUSE]<br>- AUTH: Alinhar anéis [MOUSE]</p>",
+                man_nomad: "<h3>TERMINAL SUCATEIRO</h3><p>Velho mas confiável.</p><h4>COMANDOS</h4><p>- BOOT: Diagnósticos motor.<br>- TUNE: Sintonizador [  ]<br>- RADIO: Frequências locais.<br>- PING: Latência mesh.</p><h4>PUZZLES</h4><p>- ENGINE: Sincronia motor [ESPAÇO]<br>- SIGNAL: Sintonizar [⬆⬇⬅➡]</p>",
 
                 // MISSION STEPS PT
                 m_net_s1_h: "PASSO 1: ESCANEAR NÓDULOS DE REDE", m_net_s1_s: "ALVO ENCONTRADO: SUBNET ARASAKA",
@@ -139,7 +173,24 @@ class SystemCore {
                 m_nomad_s1_h: "PASO 1: LIGAR MOTOR", m_nomad_s1_s: "MOTOR ONLINE. RPM ESTÁVEL.",
                 m_nomad_s2_h: "PASSO 2: SINTONIZAR FREQUÊNCIA", m_nomad_s2_s: "SINAL BLOQUEADO. CANAL LIMPO.",
                 m_nomad_s3_h: "PASSO 3: OUVIR TRANSMISSÃO", m_nomad_s3_s: "INTEL RECEBIDA. ROTA ATUALIZADA.",
-                m_nomad_s4_h: "PASSO 4: PINGAR REDE DE CONTRABANDO", m_nomad_s4_s: "ROTA LIMPA. INICIANDO CORRIDA."
+                m_nomad_s4_h: "PASSO 4: PINGAR REDE DE CONTRABANDO", m_nomad_s4_s: "ROTA LIMPA. INICIANDO CORRIDA.",
+
+                // NEW PUZZLE TRANSLATIONS (V2) - PT
+                pzl_level: "NÍVEL",
+                pzl_success: "SISTEMA CONTORNADO",
+                pzl_fail: "ACESSO NEGADO",
+                pzl_decrypt_title: "DECODIFICADOR DE PACOTES",
+                pzl_decrypt_hint: "Clique no hex correto antes que desapareça",
+                pzl_sync_title: "SINCRONIA NEURAL",
+                pzl_sync_hint: "Memorize o padrão, depois replique-o",
+                pzl_lock_title: "TRAVAMENTO DE ALVO",
+                pzl_lock_hint: "Mantenha o cursor sobre o alvo para travar",
+                pzl_auth_title: "BYPASS DE AUTENTICAÇÃO",
+                pzl_auth_hint: "Clique quando as lacunas se alinharem",
+                pzl_engine_title: "SINCRONIA DO MOTOR",
+                pzl_engine_hint: "Pressione ESPAÇO quando a agulha estiver na zona verde",
+                pzl_scramble_title: "DECODIFICADOR DE SINAL",
+                pzl_scramble_hint: "Use as setas para ajustar frequência e ganho"
             }
         };
     }
@@ -414,6 +465,32 @@ class SystemCore {
         }
         if (tKey === 'nomad' && c === 'tune') {
             this.startNomadTuner();
+            return;
+        }
+
+        // NEW PUZZLE TRIGGERS (V2) - With random difficulty
+        if (tKey === 'netrunner' && c === 'decrypt') {
+            this.startPuzzleV2('decrypt');
+            return;
+        }
+        if (tKey === 'netrunner' && c === 'memsync') {
+            this.startPuzzleV2('memory');
+            return;
+        }
+        if (tKey === 'corp' && c === 'lock') {
+            this.startPuzzleV2('target');
+            return;
+        }
+        if (tKey === 'corp' && c === 'auth') {
+            this.startPuzzleV2('auth');
+            return;
+        }
+        if (tKey === 'nomad' && c === 'engine') {
+            this.startPuzzleV2('engine');
+            return;
+        }
+        if (tKey === 'nomad' && c === 'signal') {
+            this.startPuzzleV2('signal');
             return;
         }
 
@@ -1188,6 +1265,64 @@ class SystemCore {
                 grid.geometry.attributes.position.needsUpdate = true;
             }
         };
+    }
+
+    // ============================================
+    // TRANSLATION HELPER
+    // ============================================
+    t(key) {
+        // Try i18next first, fallback to local resources
+        if (typeof i18next !== 'undefined' && i18next.t) {
+            const val = i18next.t(key);
+            if (val !== key) return val;
+        }
+        // Fallback to local resources
+        const lang = this.lang || 'en';
+        return this.resources[lang]?.[key] || this.resources.en?.[key] || key;
+    }
+
+    // ============================================
+    // NEW PUZZLE SYSTEM V2
+    // ============================================
+    startPuzzleV2(type) {
+        if (this.puzzleActive) return;
+        this.puzzleActive = true;
+
+        // Initialize puzzle engine if not already
+        if (!this.puzzleEngine) {
+            this.puzzleEngine = new PuzzleEngine(this);
+        }
+
+        // Map puzzle types to containers and classes
+        const puzzleMap = {
+            'decrypt': { container: 'puzzle-decrypt', PuzzleClass: PacketDecryptorPuzzle },
+            'memory': { container: 'puzzle-memory', PuzzleClass: MemorySyncPuzzle },
+            'target': { container: 'puzzle-target', PuzzleClass: TargetLockPuzzle },
+            'auth': { container: 'puzzle-auth', PuzzleClass: AuthBypassPuzzle },
+            'engine': { container: 'puzzle-engine', PuzzleClass: EngineSyncPuzzle },
+            'signal': { container: 'puzzle-signal', PuzzleClass: SignalScramblerPuzzle }
+        };
+
+        const config = puzzleMap[type];
+        if (!config) {
+            console.error('Unknown puzzle type:', type);
+            this.puzzleActive = false;
+            return;
+        }
+
+        const container = document.getElementById(config.container);
+        if (!container) {
+            console.error('Puzzle container not found:', config.container);
+            this.puzzleActive = false;
+            return;
+        }
+
+        // Create and start puzzle
+        this.puzzleEngine.activePuzzle = new config.PuzzleClass(this.puzzleEngine, container);
+        this.puzzleEngine.activePuzzle.start();
+
+        // Log that puzzle started
+        this.log(this.theme, `EXECUTING ${type.toUpperCase()} PROTOCOL...`, false);
     }
 
     // ============================================
