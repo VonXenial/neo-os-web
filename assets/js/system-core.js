@@ -559,9 +559,10 @@ class SystemCore {
         this.scene.fog = new THREE.Fog(0x0a0a14, 20, 100);
 
         this.cam = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.ren = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true });
+        this.ren = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: false }); // Force Opaque
         this.ren.setSize(window.innerWidth, window.innerHeight);
         this.ren.setPixelRatio(window.devicePixelRatio);
+        console.log("NEO-OS: 3D Engine Initialized");
 
         // Resize Listener
         window.addEventListener('resize', () => {
@@ -574,8 +575,13 @@ class SystemCore {
         this.activeAnim = null; // Function to run per frame
         const loop = () => {
             requestAnimationFrame(loop);
-            if (this.activeAnim) this.activeAnim();
-            this.ren.render(this.scene, this.cam);
+            try {
+                if (this.activeAnim) this.activeAnim();
+                this.ren.render(this.scene, this.cam);
+            } catch (e) {
+                console.error("3D Loop Error:", e);
+            }
+
             // Viz Sync
             if (audio && audio.analyser) {
                 const data = new Uint8Array(audio.analyser.frequencyBinCount);

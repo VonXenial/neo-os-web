@@ -6,7 +6,7 @@ const cyberAudio = new CyberpunkAudio();
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Background
-    initCityBackground();
+    // initCityBackground(); // CONFLICT: SystemCore handles the 3D scene now
 
     // Audio Controls Initialization
     const overlay = document.getElementById('audio-start-overlay');
