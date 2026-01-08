@@ -149,18 +149,88 @@
     <div class="top-bar">
         <div class="control-panel">
             <div id="lang-switch">
-                <button class="btn-mini" onclick="sys.setLang('es')">ES</button>
-                <button class="btn-mini" onclick="sys.setLang('en')">EN</button>
-                <button class="btn-mini" onclick="sys.setLang('pt')">PT</button>
+                <button class="btn-mini" id="btn-lang-es" onclick="window.setLang('es')">ES</button>
+                <button class="btn-mini active" id="btn-lang-en" onclick="window.setLang('en')">EN</button>
+                <button class="btn-mini" id="btn-lang-pt" onclick="window.setLang('pt')">PT</button>
             </div>
             <div style="width:1px; background:#333;"></div>
             <div style="display:flex; align-items:center; gap:5px;">
-                <span style="font-size:0.7rem; color:#888;">VOL</span>
-                <input type="range" id="vol-slider" min="0" max="100" value="50">
+                <span style="font-size:0.7rem; color:#888;">🔊</span>
+                <input type="range" id="vol-slider" min="0" max="100" value="50" title="Volume">
+                <span id="vol-value" style="font-size:0.6rem; color:#00ffcc; width:25px;">50%</span>
             </div>
-            <div class="btn-mini" onclick="sys.reset()">XY</div>
+            <button class="btn-mini" onclick="sys.reset()" title="Reset">↺</button>
         </div>
     </div>
+
+    <script>
+        // Global language switch function (works before sys is fully initialized)
+        window.setLang = function (lang) {
+            // Update button states
+            document.querySelectorAll('#lang-switch .btn-mini').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            // Update system if available
+            if (typeof sys !== 'undefined' && sys.setLang) {
+                sys.setLang(lang);
+            } else if (typeof i18next !== 'undefined') {
+                i18next.changeLanguage(lang, function () {
+                    // Apply translations to all data-i18n elements
+                    document.querySelectorAll('[data-i18n]').forEach(e => {
+                        e.innerText = i18next.t(e.dataset.i18n);
+                    });
+                });
+            }
+
+            // Save preference
+            localStorage.setItem('neo-os-lang', lang);
+        };
+
+        // Volume slider with live feedback
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.getElementById('vol-slider');
+            const volValue = document.getElementById('vol-value');
+
+            // Detect browser language and load saved preferences
+            const savedLang = localStorage.getItem('neo-os-lang');
+            if (savedLang) {
+                window.setLang(savedLang);
+            } else {
+                // Auto-detect from browser
+                const browserLang = navigator.language || navigator.userLanguage;
+                const langCode = browserLang.split('-')[0].toLowerCase(); // Get 'es' from 'es-ES'
+
+                // Only use if we support it, otherwise default to 'en'
+                const supportedLangs = ['en', 'es', 'pt'];
+                const detectedLang = supportedLangs.includes(langCode) ? langCode : 'en';
+
+                window.setLang(detectedLang);
+                console.log('NEO-OS: Auto-detected language:', detectedLang);
+            }
+
+            const savedVol = localStorage.getItem('neo-os-vol');
+            if (savedVol) {
+                slider.value = savedVol;
+                volValue.textContent = savedVol + '%';
+            }
+
+            slider.addEventListener('input', function (e) {
+                const val = e.target.value;
+                volValue.textContent = val + '%';
+
+                // Resume audio context if needed and set volume
+                if (typeof audio !== 'undefined') {
+                    if (audio.ctx.state === 'suspended') {
+                        audio.ctx.resume();
+                    }
+                    audio.setVolume(val / 100);
+                }
+
+                // Save preference
+                localStorage.setItem('neo-os-vol', val);
+            });
+        });
+    </script>
 
     <canvas id="cyber-canvas"></canvas>
     <div class="scanline"></div>
@@ -174,12 +244,12 @@
         <h1 class="glitch-text pulse-title"
             style="color:white; font-family:'Orbitron'; font-size:4rem; letter-spacing:10px; text-transform:uppercase;">
             NEO-OS v3.1</h1>
-        <p style="color:#00ffcc; letter-spacing:3px; opacity:0.8;">SELECT YOUR FACTION</p>
+        <p style="color:#00ffcc; letter-spacing:3px; opacity:0.8;" data-i18n="select_faction">SELECT YOUR FACTION</p>
 
         <div class="faction-grid">
             <!-- 1. NETRUNNER -->
             <div class="faction-card fc-net" onclick="sys.loadTheme('netrunner')">
-                <div class="fc-tag">INTELLIGENCE</div>
+                <div class="fc-tag" data-i18n="tag_intel">INTELLIGENCE</div>
                 <img src="assets/img/logo_net.svg" class="card-logo" alt="Netrunner Logo">
                 <div class="fc-title">NETRUNNER</div>
                 <div class="fc-desc" data-i18n="desc_net">Circular Interface. Holographic Data. Trance Audio.</div>
@@ -187,7 +257,7 @@
 
             <!-- 2. ARASAKA -->
             <div class="faction-card fc-corp" onclick="sys.loadTheme('corp')">
-                <div class="fc-tag">MIL-SPEC</div>
+                <div class="fc-tag" data-i18n="tag_milspec">MIL-SPEC</div>
                 <img src="assets/img/logo_corp.svg" class="card-logo" alt="Arasaka Logo">
                 <div class="fc-title">ARASAKA</div>
                 <div class="fc-desc" data-i18n="desc_corp">Tactical Interface. Heavy Industrial Audio.</div>
@@ -195,7 +265,7 @@
 
             <!-- 3. NOMAD -->
             <div class="faction-card fc-nomad" onclick="sys.loadTheme('nomad')">
-                <div class="fc-tag">SCAVENGER</div>
+                <div class="fc-tag" data-i18n="tag_scav">SCAVENGER</div>
                 <img src="assets/img/logo_nomad.svg" class="card-logo" alt="Nomad Logo">
                 <div class="fc-title">NOMAD</div>
                 <div class="fc-desc" data-i18n="desc_nomad">Analog Interface. Retro-Synth Audio.</div>
@@ -213,7 +283,7 @@
                 <div style="font-size:1.5rem;">45.2 TB/s</div>
             </div>
             <div class="net-box">
-                <div style="font-size:0.8rem; margin-bottom:5px;">DAEMON</div>
+                <div style="font-size:0.8rem; margin-bottom:5px;" data-i18n="lbl_daemon">DAEMON</div>
                 <div style="color:#fff;">V 2.4.1 (GHOST)</div>
             </div>
         </div>
@@ -231,12 +301,12 @@
 
         <div class="net-datas nd-right">
             <div class="net-box" style="border-left:none; border-right:3px solid #00ffcc;">
-                <div style="font-size:0.8rem; margin-bottom:5px;">ICE BREAKER</div>
-                <div style="color:#fff;">ACTIVE</div>
+                <div style="font-size:0.8rem; margin-bottom:5px;" data-i18n="lbl_icebreaker">ICE BREAKER</div>
+                <div style="color:#fff;" data-i18n="lbl_active">ACTIVE</div>
             </div>
             <div class="net-box" style="border-left:none; border-right:3px solid #00ffcc;">
                 <div style="font-size:0.8rem; margin-bottom:5px;" data-i18n="lbl_loc">LOCATION</div>
-                <div style="color:#fff;">DEEP NET</div>
+                <div style="color:#fff;" data-i18n="lbl_deepnet">DEEP NET</div>
             </div>
         </div>
 
@@ -259,14 +329,15 @@
 
         <div class="corp-grid">
             <div class="corp-panel">
-                <div style="font-weight:bold; margin-bottom:15px; color:white;">COMMANDS</div>
+                <div style="font-weight:bold; margin-bottom:15px; color:white;" data-i18n="lbl_commands">COMMANDS</div>
                 <div class="corp-list-item" onclick="sys.handleCmd('corp', 'scan')">TACTICAL SCAN</div>
                 <div class="corp-list-item" onclick="sys.handleCmd('corp', 'deploy')">DEPLOY DRONE</div>
                 <div class="corp-list-item" onclick="sys.handleCmd('corp', 'purge')">PURGE SYSTEM</div>
             </div>
 
             <div class="corp-panel" style="display: flex; flex-direction: column;">
-                <div style="border-bottom: 1px solid #500; margin-bottom:10px; padding-bottom:5px;">LOG FEED</div>
+                <div style="border-bottom: 1px solid #500; margin-bottom:10px; padding-bottom:5px;"
+                    data-i18n="lbl_logfeed">LOG FEED</div>
                 <div class="corp-log" id="log-corp">
                     [SYSTEM] Connection Established.<br>
                     [SYSTEM] Biomodes: GREEN.<br>
@@ -284,7 +355,7 @@
                     ELIMINATE TARGET AT SECTOR 4.<br>NO WITNESSES.
                 </div>
 
-                <div style="margin-top:30px; font-size:0.8rem;">WEAPON STATUS</div>
+                <div style="margin-top:30px; font-size:0.8rem;" data-i18n="lbl_weapon">WEAPON STATUS</div>
                 <div style="height:20px; background:#300; margin-top:5px; position:relative;">
                     <div style="position:absolute; top:0; left:0; height:100%; width:87%; background:#f33;"></div>
                     <div style="position:absolute; top:0; right:5px; line-height:20px; color:white; font-size:0.7rem;">
@@ -311,7 +382,7 @@
 
             <div style="border: 1px dashed #ffb833; padding: 10px; margin-bottom: 20px;">
                 <div style="background: #ffb833; color: black; display: inline-block; padding: 0 5px;"
-                    data-i18n="lbl_mission">CURRENT JOB</div>
+                    data-i18n="lbl_job">CURRENT JOB</div>
                 <br>
                 <span id="nomad-mission-text">Smuggle the package across the border. Avoid patrols.</span>
             </div>

@@ -46,12 +46,31 @@ class SystemCore {
 
         this.resources = {
             en: {
+                select_faction: "SELECT YOUR FACTION",
                 desc_net: "Circular Interface. Holographic Data. Trance Audio.",
                 desc_corp: "Tactical Interface. Heavy Industrial Audio.",
                 desc_nomad: "Analog Interface. Retro-Synth Audio.",
+                // Faction Tags
+                tag_intel: "INTELLIGENCE",
+                tag_milspec: "MIL-SPEC",
+                tag_scav: "SCAVENGER",
+                // UI Labels
                 lbl_mission: "CURRENT OBJECTIVE",
+                lbl_job: "CURRENT JOB",
                 lbl_loc: "LOCATION",
                 lbl_upload: "UPLOAD STREAM",
+                lbl_daemon: "DAEMON",
+                lbl_icebreaker: "ICE BREAKER",
+                lbl_active: "ACTIVE",
+                lbl_deepnet: "DEEP NET",
+                lbl_commands: "COMMANDS",
+                lbl_logfeed: "LOG FEED",
+                lbl_weapon: "WEAPON STATUS",
+                lbl_init: "INITIATING LINK...",
+                // Placeholders
+                ph_net: "EXECUTE PROTOCOL",
+                ph_corp: "ENTER AUTH CODE...",
+                // Mission texts
                 m_net: "Construct mapping sequence initialized. Find the Ghost.",
                 m_corp: "Eliminate target at Sector 4. No witnesses.",
                 m_nomad: "Smuggle the package across the border. Avoid patrols.",
@@ -95,12 +114,31 @@ class SystemCore {
                 pzl_scramble_hint: "Use arrow keys to tune frequency and gain"
             },
             es: {
+                select_faction: "SELECCIONA TU FACCIÓN",
                 desc_net: "Interfaz Circular. Datos Holográficos. Audio Trance.",
                 desc_corp: "Interfaz Táctica. Audio Industrial Pesado.",
                 desc_nomad: "Interfaz Analógica. Audio Retro-Synth.",
+                // Faction Tags
+                tag_intel: "INTELIGENCIA",
+                tag_milspec: "MIL-SPEC",
+                tag_scav: "CHATARRERO",
+                // UI Labels
                 lbl_mission: "OBJETIVO ACTUAL",
+                lbl_job: "TRABAJO ACTUAL",
                 lbl_loc: "UBICACIÓN",
                 lbl_upload: "FLUJO DE SUBIDA",
+                lbl_daemon: "DAEMON",
+                lbl_icebreaker: "ROMPEHIELOS",
+                lbl_active: "ACTIVO",
+                lbl_deepnet: "RED PROFUNDA",
+                lbl_commands: "COMANDOS",
+                lbl_logfeed: "REGISTRO",
+                lbl_weapon: "ESTADO DEL ARMA",
+                lbl_init: "INICIANDO ENLACE...",
+                // Placeholders
+                ph_net: "EJECUTAR PROTOCOLO",
+                ph_corp: "INGRESE CÓDIGO...",
+                // Mission texts
                 m_net: "Secuencia de mapeo iniciada. Encuentra al Fantasma.",
                 m_corp: "Eliminar objetivo en Sector 4. Sin testigos.",
                 m_nomad: "Contrabandear el paquete por la frontera. Evita patrullas.",
@@ -144,12 +182,31 @@ class SystemCore {
                 pzl_scramble_hint: "Usa las flechas para ajustar frecuencia y ganancia"
             },
             pt: {
+                select_faction: "SELECIONE SUA FACÇÃO",
                 desc_net: "Interface Circular. Dados Holográficos. Áudio Trance.",
                 desc_corp: "Interface Tática. Áudio Industrial Pesado.",
                 desc_nomad: "Interface Analógica. Áudio Retro-Synth.",
+                // Faction Tags
+                tag_intel: "INTELIGÊNCIA",
+                tag_milspec: "MIL-SPEC",
+                tag_scav: "SUCATEIRO",
+                // UI Labels
                 lbl_mission: "OBJETIVO ATUAL",
+                lbl_job: "TRABALHO ATUAL",
                 lbl_loc: "LOCALIZAÇÃO",
                 lbl_upload: "FLUXO DE UPLOAD",
+                lbl_daemon: "DAEMON",
+                lbl_icebreaker: "QUEBRA-GELO",
+                lbl_active: "ATIVO",
+                lbl_deepnet: "DEEP NET",
+                lbl_commands: "COMANDOS",
+                lbl_logfeed: "REGISTRO",
+                lbl_weapon: "STATUS DA ARMA",
+                lbl_init: "INICIANDO LINK...",
+                // Placeholders
+                ph_net: "EXECUTAR PROTOCOLO",
+                ph_corp: "DIGITE CÓDIGO...",
+                // Mission texts
                 m_net: "Sequência de mapeamento iniciada. Encontre o Fantasma.",
                 m_corp: "Eliminar alvo no Setor 4. Sem testemunhas.",
                 m_nomad: "Contrabandear o pacote pela fronteira. Evite patrulhas.",
@@ -203,8 +260,22 @@ class SystemCore {
             return;
         }
 
-        i18next.init({ lng: 'en', resources: { en: { translation: this.resources.en }, es: { translation: this.resources.es }, pt: { translation: this.resources.pt } } },
-            () => this.updateText());
+        // Detect language from storage or browser
+        let savedLang = localStorage.getItem('neo-os-lang');
+        if (!savedLang) {
+            const browserLang = navigator.language || navigator.userLanguage;
+            const langCode = browserLang.split('-')[0].toLowerCase();
+            const supported = ['en', 'es', 'pt'];
+            savedLang = supported.includes(langCode) ? langCode : 'en';
+        }
+
+        // Initialize i18next with detected language
+        i18next.init({ lng: savedLang, resources: { en: { translation: this.resources.en }, es: { translation: this.resources.es }, pt: { translation: this.resources.pt } } },
+            () => {
+                this.updateText();
+                // Sync button state
+                if (window.setLang) window.setLang(savedLang);
+            });
 
         // Init Minigame
         this.minigame = new BreachMinigame(this);
@@ -551,16 +622,11 @@ class SystemCore {
 
         // Update Netrunner
         if (this.theme === 'netrunner') {
-            const container = document.getElementById('ui-netrunner');
-            let hintEl = document.getElementById('net-mission-hint');
-            if (!hintEl) {
-                hintEl = document.createElement('div');
-                hintEl.id = 'net-mission-hint';
-                hintEl.className = 'mission-hint';
-                hintEl.style.color = '#00ffcc';
-                container.appendChild(hintEl);
+            const missionTextEl = document.getElementById('net-mission-text');
+            if (missionTextEl) {
+                // Clear and add step header + hint text
+                missionTextEl.innerHTML = `<div style="font-size: 0.75rem; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px;">${hintText}</div>`;
             }
-            hintEl.innerText = hintText;
         }
 
         // Update Corp
